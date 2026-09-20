@@ -29,7 +29,7 @@ export class HalsteadView {
     this.derivedEl.innerHTML = [
       ["Словарь программы", `η = η<sub>1</sub> + η<sub>2</sub> = ${m.eta1} + ${m.eta2} = ${m.eta}`],
       ["Длина программы", `N = N<sub>1</sub> + N<sub>2</sub> = ${m.N1} + ${m.N2} = ${m.N}`],
-      ["Объём программы", `V = N · log<sub>2</sub>(η) = ${m.N} · log<sub>2</sub>(${m.eta}) = ${m.V}`],
+      ["Объём программы", `V = N · log<sub>2</sub>(η) = ${m.N} · log<sub>2</sub>(${m.eta}) ≈ ${m.V}`],
     ].map(([label, value]) => `<div class="metric"><span class="label">${label}</span><span class="value">${value}</span></div>`).join("");
   }
 }

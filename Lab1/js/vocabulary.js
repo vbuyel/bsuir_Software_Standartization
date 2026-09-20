@@ -1,17 +1,24 @@
-const set = (s) => new Set(s.split(" "));
+const set = (s) => new Set(s.trim().split(/\s+/));
 
-export const NOT_FUNC = set("if for while switch catch else do");
+export const KEYWORDS = set(
+  "if else while do for switch case default break continue return goto using namespace class struct enum try catch throw new delete typedef typename static const volatile auto"
+);
+
 export const TYPES = set(
-  "int double float char bool void long short unsigned signed auto const volatile static string size_t wchar_t class struct enum int32_t int64_t uint32_t uint64_t"
+  "int double float char bool void long short unsigned signed string wstring size_t wchar_t int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t vector map set list deque array"
 );
-export const STD_TYPES = set("string wstring vector map set size_t int");
-export const STREAMS = set("cin cout cerr clog endl");
-export const LIB_FUNCS = set(
-  "abs fabs sin cos tan sqrt pow log exp printf scanf gets puts getline strlen atoi main"
+
+export const STD_ENTITIES = set(
+  "cin cout cerr clog endl std Math Console WriteLine Write ReadLine ReadKey Parse Abs abs fabs sin cos tan sqrt pow log exp printf scanf gets puts getline strlen atoi main"
 );
+
+export const LITERAL_CONSTS = set("true false null nullptr");
+
 export const MULTI_OPS = [
   ">>=", "<<=", "==", "!=", "<=", ">=", "&&", "||", "<<", ">>", "++", "--",
   "->", "::", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
 ];
+
 export const PAIRS = { "(": "( )", "{": "{ }", "[": "[ ]" };
 export const CLOSES = { "(": ")", "{": "}", "[": "]" };
+export const CLOSING_BRACKETS = new Set([")", "}", "]"]);

@@ -29,6 +29,6 @@ export class HalsteadMetrics {
     this.N2 = operands.total;
     this.eta = this.eta1 + this.eta2;
     this.N = this.N1 + this.N2;
-    this.V = this.eta && this.N ? Math.round(this.N * Math.log2(this.eta)) : 0;
+    this.V = this.eta && this.N ? Number((this.N * Math.log2(this.eta)).toFixed(1)) : 0;
   }
 }

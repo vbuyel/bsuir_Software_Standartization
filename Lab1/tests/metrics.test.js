@@ -37,24 +37,24 @@ describe("HalsteadMetrics", () => {
     assert.equal(m.N2, 3);
     assert.equal(m.eta, 4);
     assert.equal(m.N, 6);
-    assert.equal(m.V, Math.round(6 * Math.log2(4)));
+    assert.equal(m.V, Number((6 * Math.log2(4)).toFixed(1)));
   });
 
-  it("matches the PDF example volume rounding", () => {
+  it("matches the reference volume calculation", () => {
     const ops = new FrequencyTable();
     const ods = new FrequencyTable();
-    for (let i = 0; i < 14; i++) ops.add("op" + i);
-    for (let i = 0; i < 7; i++) ods.add("od" + i);
-    for (let i = 0; i < 33 - 14; i++) ops.add("op0");
-    for (let i = 0; i < 28 - 7; i++) ods.add("od0");
+    for (let i = 0; i < 40; i++) ops.add("op" + i);
+    for (let i = 0; i < 17; i++) ods.add("od" + i);
+    for (let i = 0; i < 213 - 40; i++) ops.add("op0");
+    for (let i = 0; i < 81 - 17; i++) ods.add("od0");
     const m = new HalsteadMetrics(ops, ods);
-    assert.equal(m.eta1, 14);
-    assert.equal(m.eta2, 7);
-    assert.equal(m.N1, 33);
-    assert.equal(m.N2, 28);
-    assert.equal(m.eta, 21);
-    assert.equal(m.N, 61);
-    assert.equal(m.V, 268);
+    assert.equal(m.eta1, 40);
+    assert.equal(m.eta2, 17);
+    assert.equal(m.N1, 213);
+    assert.equal(m.N2, 81);
+    assert.equal(m.eta, 57);
+    assert.equal(m.N, 294);
+    assert.equal(m.V, 1714.9);
   });
 
   it("returns zero volume for empty program", () => {
