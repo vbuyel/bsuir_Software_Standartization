@@ -1,7 +1,7 @@
 import { HalsteadClassifier } from "./classifier.js";
 import { CppLexer } from "./lexer.js";
 import { HalsteadMetrics } from "./metrics.js";
-import { KEYWORDS, LITERAL_CONSTS, STD_ENTITIES } from "./vocabulary.js";
+import { KEYWORDS, LITERAL_CONSTS, STD_ENTITIES, TYPES } from "./vocabulary.js";
 
 export class HalsteadAnalyzer {
   constructor(lexer = new CppLexer()) {
@@ -26,6 +26,7 @@ export class HalsteadAnalyzer {
         t.type === "id" &&
         next.value === "(" &&
         !KEYWORDS.has(t.value) &&
+        !TYPES.has(t.value) &&
         !LITERAL_CONSTS.has(t.value)
       ) {
         names.add(t.value);

@@ -39,10 +39,22 @@ export class HalsteadClassifier {
         this.ods.add(`"${t.value}"`);
       } else if (t.type === "char") {
         this.ods.add(`'${t.value}'`);
+      } else if (t.value === "(") {
+        // Если круглые скобки стоят после имени функции, пропускаем их (не считаем за оператор)
+        const isAfterFunc =
+          prev &&
+          prev.type === "id" &&
+          (this.functionNames.has(prev.value) ||
+            (!KEYWORDS.has(prev.value) &&
+              !TYPES.has(prev.value) &&
+              !LITERAL_CONSTS.has(prev.value)));
+        if (!isAfterFunc) {
+          this.ops.add("( )");
+        }
       } else if (PAIRS[t.value]) {
         this.ops.add(PAIRS[t.value]);
       } else if (CLOSING_BRACKETS.has(t.value)) {
-        // The opening bracket already registered the pair as 1 operator
+        // Закрывающая скобка не дублирует учёт пары
         continue;
       } else if (LITERAL_CONSTS.has(t.value)) {
         this.ods.add(t.value);
