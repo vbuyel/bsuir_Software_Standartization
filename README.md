@@ -1,16 +1,38 @@
-# Software Standardization Labs
+# Лабораторные работы по стандартизации программного обеспечения
 
-Repository for Software Standardization lab assignments.
+Репозиторий для лабораторных работ по дисциплине «Стандартизация программного обеспечения».
 
-## Lab 1: Halstead Metrics Calculator (C++)
+## Лабораторная работа 1: Калькулятор метрик Холстеда (C++)
 
-Interactive web calculator for calculating Halstead software science metrics from C++ code.
+Интерактивный веб-калькулятор для расчёта метрик Холстеда по исходному коду программ на C++.
 
-- **Live Demo / Hosted App:** [https://vbuyel.github.io/bsuir_Software_Standartization/](https://vbuyel.github.io/bsuir_Software_Standartization/)
-- **Source Directory:** [Lab1/](./Lab1/)
+- **Демо онлайн / Приложение:** [https://vbuyel.github.io/bsuir_Software_Standartization/](https://vbuyel.github.io/bsuir_Software_Standartization/)
+- **Исходный код:** [Lab1/](./Lab1/)
 
-### Features
-- Tokenization and lexical analysis of C++ source code.
-- Classification of unique operators ($\eta_1$) and operands ($\eta_2$).
-- Calculation of basic metrics: vocabulary ($\eta$), length ($N$).
-- Calculation of derived metrics: theoretical volume ($V$), difficulty ($D$), effort ($E$), time to implement ($T$), and estimated delivered bugs ($B$).
+### Возможности
+- Токенизация и лексический анализ исходного кода C++.
+- Классификация уникальных операторов ($\eta_1$) и операндов ($\eta_2$).
+- Расчёт базовых метрик: словарь ($\eta$), длина программы ($N$).
+- Расчёт производных метрик: объём программы ($V$), сложность ($D$), трудоёмкость ($E$), время реализации ($T$) и прогнозируемое число ошибок ($B$).
+
+### Правила классификации
+
+#### Операторы ($\eta_1, N_1$)
+- **Знаки операций и присваивания:** `=`, `+`, `-`, `*`, `/`, `%`, `++`, `--`, `&&`, `||`, `!`, `==`, `!=`, `<`, `>`, `<=`, `>=`, `+=`, `-=` и др.
+- **Разделители и знаки препинания:** `;`, `,`, `.`, `->`, `::`, `<<`, `>>`, `:`
+- **Парные скобки:** `( )`, `{ }`, `[ ]` (парные скобки учитываются по открывающей; скобки сразу после имени функции не дублируются).
+- **Ключевые слова управления:** `for`, `while`, `switch`, `case`, `default`, `break`, `continue`, `return`, `goto` и др.
+- **Составные операторы:** несколько служебных слов в составе единой конструкции считаются одним оператором:
+  - `if...else` (условный оператор с веткой `else`; одиночный `if` без `else` учитывается как `if`);
+  - `do...while` (цикл с постусловием `do` и закрывающим `while`);
+  - `try...catch`.
+- **Имена функций и подпрограмм:** пользовательские функции (`main`, `nextTerm`, `absValue`...), а также стандартные подпрограммы и потоки (`cout`, `cin`, `endl`...).
+
+#### Операнды ($\eta_2, N_2$)
+- **Типы данных:** `int`, `double`, `float`, `char`, `bool`, `void`, `long`, `short`, `unsigned`, `signed`, `string`, `size_t` и др.
+- **Идентификаторы:** имена переменных, массивов и параметров функций (`x`, `y`, `vs`, `eps`, `n`, `mode`...).
+- **Константы и литералы:**
+  - Числовые литералы (`0`, `1`, `2`, `0.0001`, `100`...);
+  - Строковые литералы (`"Enter x: "`, `"ready"`, `"done"`...);
+  - Символьные литералы (`'a'`, `'\n'`...);
+  - Литеральные константы (`true`, `false`, `nullptr`, `null`).
