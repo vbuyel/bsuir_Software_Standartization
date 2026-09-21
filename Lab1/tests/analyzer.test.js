@@ -73,7 +73,7 @@ describe("HalsteadAnalyzer classification", () => {
     assert.ok(names(m.operands).includes('"ready"'));
   });
 
-  it("counts types as operators and declared variables as operands", () => {
+  it("counts types and declared variables as operands", () => {
     const m = analyzer.analyze(`
       int main() {
         int n;
@@ -82,23 +82,44 @@ describe("HalsteadAnalyzer classification", () => {
         return 0;
       }
     `);
-    assert.ok(names(m.operators).includes("int"));
-    assert.ok(names(m.operators).includes("double"));
+    assert.ok(names(m.operands).includes("int"));
+    assert.ok(names(m.operands).includes("double"));
+    assert.ok(!names(m.operators).includes("int"));
+    assert.ok(!names(m.operators).includes("double"));
     assert.ok(names(m.operands).includes("eps"));
     assert.ok(names(m.operands).includes("n"));
     assert.equal(countOf(m.operators, ";"), 4);
   });
 
-  it("counts if and else as separate operators", () => {
+  it("counts composite if...else statement as one operator", () => {
     const m = analyzer.analyze(`
       int absValue(int v) {
         if (v < 0) { v = -v; } else { v = v; }
         return v;
       }
     `);
-    assert.equal(countOf(m.operators, "if"), 1);
-    assert.equal(countOf(m.operators, "else"), 1);
-    assert.equal(countOf(m.operators, "if...else"), 0);
+    assert.equal(countOf(m.operators, "if...else"), 1);
+    assert.equal(countOf(m.operators, "if"), 0);
+    assert.equal(countOf(m.operators, "else"), 0);
+  });
+
+  it("counts do...while as one composite operator and while loop separately", () => {
+    const m = analyzer.analyze(`
+      int main() {
+        int i;
+        i = 0;
+        do {
+          i = i + 1;
+        } while (i < 5);
+        while (i > 0) {
+          i = i - 1;
+        }
+        return 0;
+      }
+    `);
+    assert.equal(countOf(m.operators, "do...while"), 1);
+    assert.equal(countOf(m.operators, "while"), 1);
+    assert.equal(countOf(m.operators, "do"), 0);
   });
 
   it("keeps N1 and N2 equal to the sums of frequencies", () => {
@@ -117,17 +138,23 @@ describe("HalsteadAnalyzer classification", () => {
 });
 
 describe("HalsteadAnalyzer on sample.cpp", () => {
-  it("returns the exact metrics for sample.cpp with function parentheses skipped", () => {
+  it("returns the exact metrics for sample.cpp with composite operators and types as operands", () => {
     const src = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "sample.cpp"), "utf8");
     const m = analyzer.analyze(src);
-    assert.equal(m.eta1, 46);
-    assert.equal(m.N1, 333);
-    assert.equal(m.eta2, 35);
-    assert.equal(m.N2, 157);
+    assert.equal(m.eta1, 41);
+    assert.equal(m.N1, 312);
+    assert.equal(m.eta2, 40);
+    assert.equal(m.N2, 174);
     assert.equal(m.eta, 81);
-    assert.equal(m.N, 490);
-    assert.equal(m.V, 3106.5);
+    assert.equal(m.N, 486);
+    assert.equal(m.V, 3081.2);
+    assert.equal(countOf(m.operators, "if...else"), 3);
+    assert.equal(countOf(m.operators, "if"), 2);
+    assert.equal(countOf(m.operators, "do...while"), 1);
+    assert.equal(countOf(m.operators, "while"), 1);
     assert.equal(countOf(m.operators, "( )"), 11);
+    assert.ok(names(m.operands).includes("double"));
+    assert.ok(names(m.operands).includes("int"));
     assert.ok(!m.operands.some((o) => /cin|cout|endl|nextTerm|absValue|printResult|readMode|main/.test(o.name)));
   });
 });
