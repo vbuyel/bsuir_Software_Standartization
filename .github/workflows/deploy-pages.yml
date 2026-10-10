@@ -1,4 +1,4 @@
-name: Deploy Lab1 to GitHub Pages
+name: Deploy labs to GitHub Pages
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './Lab1'
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment

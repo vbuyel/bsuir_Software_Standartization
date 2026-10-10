@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Метрики Джилба</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --paper: #fffdf8;
+      --ink: #1e2430;
+      --muted: #5c6573;
+      --line: #cfc6b6;
+      --accent: #1f4b73;
+      --head: #e8efe8;
+      --foot: #eef2f6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.45;
+    }
+
+    header {
+      padding: 28px 24px 8px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+      font-weight: 600;
+    }
+
+    .rules {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 70ch;
+    }
+
+    .nav {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+    }
+
+    .nav a { color: var(--accent); }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 24px 48px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      font-family: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #fbfaf6;
+      color: var(--ink);
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 12px;
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover { filter: brightness(1.08); }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .metrics {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 14px;
+      background: var(--foot);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .metric .value {
+      font-size: 1.05rem;
+    }
+
+    table.gilb {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    table.gilb th,
+    table.gilb td {
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      vertical-align: top;
+    }
+
+    table.gilb th {
+      background: var(--head);
+      text-align: left;
+      font-weight: 600;
+    }
+
+    table.gilb td.num { text-align: right; white-space: nowrap; }
+    table.gilb td.token { font-family: "IBM Plex Mono", "SF Mono", Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="nav"><a href="../">← К списку лабораторных</a></p>
+    <h1>Расчёт метрик Джилба</h1>
+    <p class="rules">
+      В абсолютную сложность <code>CL</code> входят операторы, проверяющие условие:
+      <code>if</code>, <code>else if</code>, <code>for</code>, <code>while</code>, <code>do</code> (цикл <code>do…while</code> один раз),
+      каждая метка <code>case</code>. Не увеличивают <code>CL</code>: <code>else</code>, <code>default</code>, само ключевое слово <code>switch</code>.
+    </p>
+    <p class="rules">
+      Относительная сложность <code>cl = CL / N<sub>op</sub></code>, где <code>N<sub>op</sub></code> — общее число операторов программы.
+      <code>CLI</code> — максимальная глубина вложенности условных конструкций
+      (пример: <code>for</code> с <code>if</code> внутри → уровень вложенности 1).
+    </p>
+  </header>
+  <main>
+    <section class="panel">
+      <label for="source">Исходный текст программы на C++</label>
+      <textarea id="source" spellcheck="false"></textarea>
+      <button type="button" id="analyze-btn">Рассчитать метрики</button>
+    </section>
+
+    <section class="panel">
+      <h2>Метрики Джилба</h2>
+      <div id="metrics" class="metrics"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Разбор конструкций</h2>
+      <div id="table-wrap"></div>
+    </section>
+  </main>
+  <script type="module" src="lab2.js"></script>
+</body>
+</html>

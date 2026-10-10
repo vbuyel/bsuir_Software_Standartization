@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стандартизация ПО — лабораторные</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --paper: #fffdf8;
+      --ink: #1e2430;
+      --muted: #5c6573;
+      --line: #cfc6b6;
+      --accent: #1f4b73;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 1.85rem;
+      font-weight: 600;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0 0 28px;
+      max-width: 50ch;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    a.lab {
+      display: block;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px 20px;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a.lab:hover {
+      border-color: var(--accent);
+    }
+
+    a.lab strong {
+      display: block;
+      color: var(--accent);
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    a.lab span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Стандартизация программного обеспечения</h1>
+    <p class="lead">Лабораторные работы: калькуляторы метрик сложности программ.</p>
+    <ul>
+      <li>
+        <a class="lab" href="Lab1/">
+          <strong>Лабораторная 1 — метрики Холстеда</strong>
+          <span>Словарь, длина и объём программы по исходному коду на C++</span>
+        </a>
+      </li>
+      <li>
+        <a class="lab" href="Lab2/">
+          <strong>Лабораторная 2 — метрики Джилба</strong>
+          <span>Абсолютная и относительная логическая сложность, уровень вложенности (C++)</span>
+        </a>
+      </li>
+    </ul>
+  </main>
+</body>
+</html>
