@@ -160,11 +160,19 @@
       В абсолютную сложность <code>CL</code> входят операторы, проверяющие условие:
       <code>if</code>, <code>else if</code>, <code>for</code>, <code>while</code>, <code>do</code> (цикл <code>do…while</code> один раз),
       каждая метка <code>case</code>. Не увеличивают <code>CL</code>: <code>else</code>, <code>default</code>, само ключевое слово <code>switch</code>.
+      Без <code>default</code> считаются все <code>case</code> (формула методички <code>n − 1</code> — только для <code>switch</code> с <code>default</code>).
     </p>
     <p class="rules">
-      Относительная сложность <code>cl = CL / N<sub>op</sub></code>, где <code>N<sub>op</sub></code> — общее число операторов программы.
-      <code>CLI</code> — максимальная глубина вложенности условных конструкций
-      (пример: <code>for</code> с <code>if</code> внутри → уровень вложенности 1).
+      Относительная сложность <code>cl = CL / N<sub>op</sub></code>, где <code>N<sub>op</sub></code> — операторы языка
+      в классическом виде: заголовки <code>if</code>/<code>for</code>/<code>while</code>/<code>do</code>/<code>switch</code>
+      и инструкции с <code>;</code> (включая <code>break</code>/<code>return</code>). Без объявлений, без
+      <code>else</code>/<code>case</code>/<code>default</code> как отдельных операторов и без пунктуации Холстеда.
+      Слово <code>switch</code> входит в <code>N<sub>op</sub></code>, но не в <code>CL</code>.
+    </p>
+    <p class="rules">
+      <code>CLI</code> — максимальная глубина вложенности: <code>for</code> с <code>if</code> внутри → 1;
+      ветки <code>case</code> считаются как цепочка <code>IF</code> (глубина = база + номер ветки − 1),
+      поэтому <code>switch</code> с <code>n</code> ветвями и <code>default</code> даёт <code>CLI = n − 2</code>.
     </p>
   </header>
   <main>

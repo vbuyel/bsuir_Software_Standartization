@@ -57,7 +57,25 @@ test("default does not increase CL; cases do", () => {
   assert.equal(f.CL, 2);
 });
 
-test("switch without default: all cases count", () => {
+test("switch with 4 case + default → CL = 4, CLI = 3 (n-2)", () => {
+  const f = flow(`
+    int main() {
+      switch (x) {
+      case 1: break;
+      case 2: break;
+      case 3: break;
+      case 4: break;
+      default: break;
+      }
+    }
+  `);
+  const cases = f.constructs.filter((c) => c.kind === "case");
+  assert.equal(f.CL, 4);
+  assert.equal(f.CLI, 3);
+  assert.deepEqual(cases.map((c) => c.depth), [0, 1, 2, 3]);
+});
+
+test("switch without default: all cases count with IF-equivalent depths", () => {
   const f = flow(`
     int main() {
       switch (t) {
@@ -67,6 +85,7 @@ test("switch without default: all cases count", () => {
     }
   `);
   assert.equal(f.CL, 2);
+  assert.equal(f.CLI, 1);
   assert.ok(!f.constructs.some((c) => c.kind === "default"));
 });
 
@@ -87,9 +106,8 @@ test("else does not increase CL; else if does", () => {
 test("sample.cpp has expected CL and CLI", () => {
   const src = readFileSync(join(root, "sample.cpp"), "utf8");
   const f = flow(src);
-  // while, for, if, do, if, case, case, while, case, case → CL = 10
   assert.equal(f.CL, 10);
-  // deepest: if { switch { case } } → case.depth === 2
+  // if { switch { case@1, case@2 } } → CLI = 2
   assert.equal(f.CLI, 2);
   const kinds = f.constructs.filter((c) => c.countsForCL).map((c) => c.kind);
   assert.deepEqual(kinds, [

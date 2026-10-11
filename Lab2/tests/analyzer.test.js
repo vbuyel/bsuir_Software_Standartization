@@ -12,7 +12,6 @@ test("analyzer returns CL, cl, CLI for sample.cpp", () => {
   const m = new GilbAnalyzer().analyze(src);
   assert.equal(m.CL, 10);
   assert.equal(m.CLI, 2);
-  assert.equal(m.Nop, 115);
-  assert.equal(m.cl, m.CL / m.Nop);
-  assert.ok(m.cl > 0 && m.cl < 1);
+  assert.equal(m.Nop, 26);
+  assert.equal(m.cl, 10 / 26);
 });

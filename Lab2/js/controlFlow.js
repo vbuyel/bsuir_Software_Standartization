@@ -2,8 +2,10 @@
  * Walk C++ tokens, collect conditional constructs and nesting depths.
  *
  * Nesting: a construct's depth = number of enclosing conditionals
- * (if / else if / for / while / do / switch). Teacher example:
- * for { if } → if.depth === 1.
+ * (if / else if / for / while / do). Teacher example: for { if } → if.depth === 1.
+ *
+ * switch does not bump nestDepth. Each case is IF-equivalent:
+ * depth = switchBase + caseIndex (0-based), so n arms with default → CLI = n-2.
  *
  * CL contributors: if, else if, for, while (not do-while trailer), do, case.
  * Not CL: else, default, switch keyword.
@@ -36,38 +38,68 @@ export function analyzeControlFlow(tokens) {
   const constructs = [];
   let nestDepth = 0;
   let maxNesting = 0;
-  /** @type {{ kind: string, braceDepth: number, single?: boolean }[]} */
+  /** @type {{ kind: string, braceDepth: number, single?: boolean, isSwitch?: boolean, switchBase?: number, caseIndex?: number }[]} */
   const frameStack = [];
   let braceDepth = 0;
   let expectDoWhile = false;
   /** @type {{ kind: string } | null} */
   let pendingBody = null;
 
+  const noteAt = (kind, depth, countsForCL) => {
+    if (countsForCL) maxNesting = Math.max(maxNesting, depth);
+    constructs.push({ kind, depth, countsForCL });
+  };
+
   const note = (kind, countsForCL) => {
-    maxNesting = Math.max(maxNesting, nestDepth);
-    constructs.push({ kind, depth: nestDepth, countsForCL });
+    noteAt(kind, nestDepth, countsForCL);
+  };
+
+  const currentSwitch = () => {
+    for (let i = frameStack.length - 1; i >= 0; i--) {
+      if (frameStack[i].isSwitch) return frameStack[i];
+    }
+    return null;
   };
 
   const openBody = (kind, single) => {
+    if (kind === "switch") {
+      frameStack.push({
+        kind,
+        braceDepth,
+        single: !!single,
+        isSwitch: true,
+        switchBase: nestDepth,
+        caseIndex: 0,
+      });
+      return;
+    }
     nestDepth++;
     frameStack.push({ kind, braceDepth, single: !!single });
   };
 
+  const closeFrame = (closed) => {
+    if (closed.isSwitch) nestDepth = closed.switchBase;
+    else nestDepth--;
+    if (closed.kind === "do") expectDoWhile = true;
+  };
+
   const closeFramesAtBrace = () => {
-    while (frameStack.length && frameStack[frameStack.length - 1].braceDepth === braceDepth
-      && !frameStack[frameStack.length - 1].single) {
-      const closed = frameStack.pop();
-      nestDepth--;
-      if (closed.kind === "do") expectDoWhile = true;
+    while (
+      frameStack.length &&
+      frameStack[frameStack.length - 1].braceDepth === braceDepth &&
+      !frameStack[frameStack.length - 1].single
+    ) {
+      closeFrame(frameStack.pop());
     }
   };
 
   const closeSingleAtSemicolon = () => {
-    while (frameStack.length && frameStack[frameStack.length - 1].single
-      && frameStack[frameStack.length - 1].braceDepth === braceDepth) {
-      const closed = frameStack.pop();
-      nestDepth--;
-      if (closed.kind === "do") expectDoWhile = true;
+    while (
+      frameStack.length &&
+      frameStack[frameStack.length - 1].single &&
+      frameStack[frameStack.length - 1].braceDepth === braceDepth
+    ) {
+      closeFrame(frameStack.pop());
     }
   };
 
@@ -85,10 +117,8 @@ export function analyzeControlFlow(tokens) {
         pendingBody = null;
         continue;
       }
-      // Single-statement body starts here
       openBody(pendingBody.kind, true);
       pendingBody = null;
-      // fall through
     }
 
     if (t.value === "{") {
@@ -156,12 +186,26 @@ export function analyzeControlFlow(tokens) {
     }
 
     if (t.value === "case") {
-      note("case", true);
+      const sw = currentSwitch();
+      if (sw) {
+        const depth = sw.switchBase + sw.caseIndex;
+        noteAt("case", depth, true);
+        sw.caseIndex++;
+        nestDepth = depth + 1;
+      } else {
+        note("case", true);
+      }
       continue;
     }
 
     if (t.value === "default") {
-      note("default", false);
+      const sw = currentSwitch();
+      const depth = sw
+        ? sw.switchBase + Math.max(0, sw.caseIndex - 1)
+        : nestDepth;
+      // default has no predicate — record but do not raise CLI
+      constructs.push({ kind: "default", depth, countsForCL: false });
+      if (sw) nestDepth = depth + 1;
       continue;
     }
   }
